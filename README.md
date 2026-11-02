@@ -1,6 +1,6 @@
 # Streifenhelfer iPhone
 
-Verschlüsselte iPhone-Web-App, Inhaltsstand 0.3.0-dev.17 vom 02.11.2026.
+Verschlüsselte iPhone-Web-App 0.4, Inhaltsstand 0.3.0-dev.18 vom 02.11.2026.
 
 Dieses öffentliche Repository enthält nur die allgemeine Startseite und verschlüsselte App-Dateien. Zugangsschlüssel, Klartextinhalte und interne Originalunterlagen sind nicht enthalten.
 
