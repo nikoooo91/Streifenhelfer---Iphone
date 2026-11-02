@@ -1,0 +1,83 @@
+{
+  "format": "streifenhelfer-encrypted-payload",
+  "version": 1,
+  "kdf": {
+    "name": "PBKDF2",
+    "hash": "SHA-256",
+    "iterations": 600000,
+    "salt": "7-UrtYkLoVCuekEK10GHx-iH524lzGnMl5d-Uj_F_dw"
+  },
+  "cipher": {
+    "name": "AES-GCM",
+    "keyLength": 256,
+    "iv": "_-JqJcU8KUptM1SU",
+    "tagLength": 128
+  },
+  "aad": "streifenhelfer-encrypted-payload:v1",
+  "bytes": 12350040,
+  "plaintextBytes": 12350024,
+  "sha256": "3c30474625fa94466a3f2cafba9e03b828a449b072ce53dc203f73278d15e95a",
+  "chunkSize": 1048576,
+  "chunks": [
+    {
+      "name": "payload-3c30474625fa9446-0001.bin",
+      "sha256": "cbe89e7e5270a68e71f971e17475d289da2c009af52a46a6c6ee04870b5cac04",
+      "size": 1048576
+    },
+    {
+      "name": "payload-3c30474625fa9446-0002.bin",
+      "sha256": "34fbcefbc93fe044fd685823b7b0727d5c82e0d86743405db690c5b573de1839",
+      "size": 1048576
+    },
+    {
+      "name": "payload-3c30474625fa9446-0003.bin",
+      "sha256": "4003403db8f8f7aa4fd2c16754700899515a98999d1d9fbb23319e1534487ecf",
+      "size": 1048576
+    },
+    {
+      "name": "payload-3c30474625fa9446-0004.bin",
+      "sha256": "0cd1921f280db09acd4749441a62898d2425e0157d8f47d95c6ec7d86d1f0263",
+      "size": 1048576
+    },
+    {
+      "name": "payload-3c30474625fa9446-0005.bin",
+      "sha256": "c6cd4ca978f24a53cb5cb38137c8dae8f3214a1532a17d17f8be4d88920ff64c",
+      "size": 1048576
+    },
+    {
+      "name": "payload-3c30474625fa9446-0006.bin",
+      "sha256": "f93fe5868c8b548ab99bef179744c29c217462619a1b9994fe72fdaa87570e27",
+      "size": 1048576
+    },
+    {
+      "name": "payload-3c30474625fa9446-0007.bin",
+      "sha256": "b0b9d9b32e37cbeaf48fcdbd28fbcc31ff190920f103fd45f8c9a754a5c896d0",
+      "size": 1048576
+    },
+    {
+      "name": "payload-3c30474625fa9446-0008.bin",
+      "sha256": "7ce3963988bad17e8836ba4f1afc9d1a8dd1b6db3a64dab52b090a0458295ed0",
+      "size": 1048576
+    },
+    {
+      "name": "payload-3c30474625fa9446-0009.bin",
+      "sha256": "4c72b4c3ed44d49da2a452ce6432a6b0c63e58f4d7cc02ec54207cb13e40500d",
+      "size": 1048576
+    },
+    {
+      "name": "payload-3c30474625fa9446-0010.bin",
+      "sha256": "2724a1850b14a04473421109bbd74872dfc55c84690788d988169452ed4abd81",
+      "size": 1048576
+    },
+    {
+      "name": "payload-3c30474625fa9446-0011.bin",
+      "sha256": "be7d30c3de05e1a11f779ff5f173e1d42f00c3dc512ada7528e45e72f431be27",
+      "size": 1048576
+    },
+    {
+      "name": "payload-3c30474625fa9446-0012.bin",
+      "sha256": "355aa785c433bd75fa3a562dff7517922250f7c17d8bb9093b90886d8da87663",
+      "size": 815704
+    }
+  ]
+}
