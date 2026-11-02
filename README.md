@@ -1,6 +1,6 @@
 # Streifenhelfer iPhone
 
-Verschlüsselte iPhone-Web-App 0.6, Inhaltsstand Android 0.3.0-dev.19 vom 02.11.2026. Die bestehende App-Adresse und der privat bereitgestellte Zugangsschlüssel bleiben gleich.
+Verschlüsselte iPhone-Web-App 0.7, Inhaltsstand Android 0.3.0-dev.20 vom 02.11.2026. Die bestehende App-Adresse und der privat bereitgestellte Zugangsschlüssel bleiben gleich.
 
 Kurze App-Wechsel verdecken den Inhalt und erhalten die geöffnete Sitzung im Arbeitsspeicher. Nach mindestens fünf Minuten im Hintergrund wird vor dem Wiederanzeigen erneut gesperrt. iOS kann Hintergrundskripte anhalten; eine garantierte Speicherlöschung exakt nach fünf Minuten wird nicht behauptet. Neuladen, Schließen und ausdrückliches Sperren beenden die Sitzung sofort.
 
