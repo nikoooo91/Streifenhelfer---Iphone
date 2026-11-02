@@ -1,3 +1,55 @@
 <!doctype html>
 <html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#17181c"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Streifenhelfer"><meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src data:; connect-src 'self'; worker-src 'self'; frame-src blob:; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="app-icon.png"><link rel="icon" href="app-icon.png"><link rel="stylesheet" href="shell.css"><title>Streifenhelfer · iPhone</title></head>
-<body><main id="gate"><div class="brand"><img src="app-icon.png" alt="" width="46" height="46"><span>Streifenhelfer <small>NEXT</small></span></div><p class="eyebrow">AUF DEM IPHONE</p><h1>Bereit für den Dienst.</h1><p class="lead">Dein Nachschlagewerk. Mit Zugangsschlüssel öffnen.</p><form id="unlock-form"><label for="access-key">Zugangsschlüssel</label><input id="access-key" type="password" autocomplete="current-password" autocapitalize="none" spellcheck="false" required><button id="unlock" type="submit">Streifenhelfer öffnen</button></form><p id="status" role="status" aria-live="polite">Die Inhalte werden erst nach der Entschlüsselung auf diesem Gerät angezeigt.</p><details><summary>Zum Home-Bildschirm hinzufügen</summary><ol><li>Diese Seite in <strong>Safari</strong> öffnen.</li><li><strong>Teilen → Zum Home-Bildschirm</strong> wählen.</li><li>Die neue App öffnen und dort die Offlinekopie speichern.</li></ol><p>Kein Konto erforderlich. Der Zugangsschlüssel wird bei jedem Neustart und nach dem Wechsel in den Hintergrund erneut benötigt.</p></details><details><summary>Ohne Empfang nutzen</summary><p>Eine verschlüsselte Kopie auf diesem Gerät speichern. Der Zugangsschlüssel wird dabei nicht gespeichert. iOS kann Websitedaten entfernen: vor dem Einsatz einmal im Flugmodus öffnen und entsperren.</p><button id="offline" type="button" class="secondary">Offlinekopie speichern</button><button id="remove" type="button" class="quiet">Offlinekopie entfernen</button><p id="offline-status" role="status">Offlinekopie noch nicht geprüft.</p></details><p class="fine">iPhone-Fassung 0.4 · Datenbasis Android dev.18.<br>Funknotiz nicht enthalten. Gerätetest auf einem echten iPhone steht noch aus.</p></main><section id="reader" hidden aria-label="Streifenhelfer"><div class="lockbar"><span id="reader-status" role="status">Streifenhelfer</span><button id="lock" type="button">Sperren</button></div><div id="frame-host"></div></section><noscript>Bitte JavaScript in Safari einschalten.</noscript><script type="module" src="shell.mjs"></script></body></html>
+<body>
+<main id="gate">
+  <div class="brand"><img src="app-icon.png" alt="" width="46" height="46"><span>Streifenhelfer <small>NEXT</small></span></div>
+  <p class="eyebrow">AUF DEM IPHONE</p>
+  <h1>Bereit für den Dienst.</h1>
+  <p class="lead">Dein Nachschlagewerk. Mit Zugangsschlüssel öffnen.</p>
+  <form id="unlock-form" name="streifenhelfer-access">
+    <label for="access-key">Zugangsschlüssel</label>
+    <input id="access-key" name="password" type="password" autocomplete="current-password" autocapitalize="none" spellcheck="false" required>
+    <button id="unlock" type="submit">Streifenhelfer öffnen</button>
+  </form>
+  <p id="status" role="status" aria-live="polite">Die Inhalte werden erst nach der Entschlüsselung auf diesem Gerät angezeigt.</p>
+  <button id="access-help-gate" type="button" class="secondary access-help-entry">Zugang schneller öffnen</button>
+  <details>
+    <summary>Zum Home-Bildschirm hinzufügen</summary>
+    <ol><li>Diese Seite in <strong>Safari</strong> öffnen.</li><li><strong>Teilen → Zum Home-Bildschirm</strong> wählen.</li><li>Die neue App öffnen und dort die Offlinekopie speichern.</li></ol>
+    <p>Kein Konto erforderlich. Bei einem kurzen App-Wechsel bleibt deine Sitzung erhalten. Ab fünf Minuten im Hintergrund ist beim Zurückkehren der Schlüssel erneut nötig. Neuladen, Schließen und „Sperren“ beenden die Sitzung sofort. Wenn iOS die App beendet, ist der Schlüssel ebenfalls erneut nötig.</p>
+  </details>
+  <details>
+    <summary>Ohne Empfang nutzen</summary>
+    <p>Eine verschlüsselte Kopie auf diesem Gerät speichern. Der Zugangsschlüssel wird dabei nicht gespeichert. iOS kann Websitedaten entfernen: vor dem Einsatz einmal im Flugmodus öffnen und entsperren.</p>
+    <button id="offline" type="button" class="secondary">Offlinekopie speichern</button>
+    <button id="remove" type="button" class="quiet">Offlinekopie entfernen</button>
+    <p id="offline-status" role="status">Offlinekopie noch nicht geprüft.</p>
+  </details>
+  <p class="fine">iPhone-Fassung 0.5 · Datenbasis Android dev.18.<br>Funknotiz nicht enthalten. Gerätetest auf einem echten iPhone steht noch aus.</p>
+</main>
+<section id="reader" hidden aria-label="Streifenhelfer">
+  <div class="lockbar"><span id="reader-status" role="status">Streifenhelfer</span><button id="lock" type="button">Sperren</button></div>
+  <section id="quick-access-hint" hidden aria-label="Zugang einrichten">
+    <p>Schneller öffnen: Zugang in Apple Passwörter sichern.</p>
+    <div class="quick-access-actions"><button id="access-help-open" type="button" class="secondary">Einrichten</button><button id="access-help-dismiss" type="button" class="quiet">Ausblenden</button></div>
+  </section>
+  <div id="frame-host"></div>
+</section>
+<dialog id="access-help-dialog" aria-labelledby="access-help-title" aria-describedby="access-help-intro">
+  <div class="dialog-heading"><h2 id="access-help-title">Zugang schneller öffnen</h2><button id="access-help-close" type="button" class="quiet" aria-label="Anleitung schließen">Schließen</button></div>
+  <p id="access-help-intro">Speichere deinen vorhandenen Zugangsschlüssel einmal in Apples App „Passwörter“. Danach kannst du ihn automatisch ausfüllen lassen und mit Face ID bestätigen, wenn das auf deinem iPhone eingerichtet ist.</p>
+  <ol>
+    <li>Wenn Safari <strong>„Passwort sichern“</strong> anbietet, bestätige das. Sonst öffne die App <strong>„Passwörter“</strong> und wähle <strong>„Alle“ → „+“</strong>.</li>
+    <li>Trage diese Website und deinen vorhandenen Zugangsschlüssel als <strong>Passwort</strong> ein, dann sichere den Eintrag:
+      <span class="access-site">https://nikoooo91.github.io/Streifenhelfer---Iphone/</span>
+      <span class="small-note">Falls ein Benutzername verlangt wird, kannst du „Streifenhelfer“ als Bezeichnung verwenden. Es wird kein neues Konto angelegt.</span>
+    </li>
+    <li>Kehre zurück, tippe ins Feld <strong>„Zugangsschlüssel“</strong> und wähle deinen gesicherten Eintrag. Falls nichts angeboten wird, aktiviere unter <strong>Einstellungen → Allgemein → Autom. ausfüllen &amp; Passwörter</strong> das automatische Ausfüllen.</li>
+  </ol>
+  <p class="small-note">Safari entscheidet, ob es das Speichern anbietet. Diese Anleitung speichert selbst keinen Schlüssel in Apple Passwörter. Wie das Ausfüllen in der Home-Bildschirm-App erscheint, muss auf deinem iPhone geprüft werden.</p>
+  <p class="small-note">Bei App-Wechseln unter fünf Minuten bleibt deine Sitzung erhalten. Bei längerer Pause oder nach dem Neuladen ist der Schlüssel erneut nötig. Mit „Sperren“ beendest du die Sitzung jederzeit sofort.</p>
+</dialog>
+<div id="privacy-cover" hidden aria-hidden="true"><div class="brand"><img src="app-icon.png" alt="" width="46" height="46"><span>Streifenhelfer <small>NEXT</small></span></div><p>Sitzung pausiert</p></div>
+<noscript>Bitte JavaScript in Safari einschalten.</noscript>
+<script type="module" src="shell.mjs"></script>
+</body></html>

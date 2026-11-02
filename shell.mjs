@@ -1,6 +1,8 @@
 import {decryptPayload,validateManifest,MAX_UNCOMPRESSED_BYTES} from './crypto.mjs';
 const $=id=>document.getElementById(id);
 let generation=0,controller=null,frame=null,objectURL=null,offlineBusy=false,offlineGeneration=0,removing=false;
+const BACKGROUND_GRACE_MS=5*60*1000;
+let background=null,backgroundTimer=null,accessHintOffered=false,accessHelpFrame=null;
 const offlineScope=new URL('./',location.href).href;
 const offlinePrefix='streifenhelfer-encrypted-'+encodeURIComponent(offlineScope)+'-';
 const offlineControl=offlinePrefix+'control',offlineState=new URL('__offline-control',offlineScope).href;
@@ -8,11 +10,44 @@ let offlineMutation=Promise.resolve();
 function offlineExclusive(fn){const next=offlineMutation.then(fn,fn);offlineMutation=next.catch(()=>{});return next;}
 async function setConsent(consent){const c=await caches.open(offlineControl);await c.put(offlineState,new Response(JSON.stringify({consent,removed:!consent}),{headers:{'content-type':'application/json'}}));}
 const status=t=>{$('status').textContent=t;$('reader-status').textContent=t;};
+function closeAccessHelp(){const dialog=$('access-help-dialog');if(dialog.open)dialog.close();}
+function openAccessHelp(invokingFrame=null){
+ if(document.hidden)return;
+ const dialog=$('access-help-dialog');if(dialog.open)return;
+ accessHelpFrame=invokingFrame===frame?frame:null;dialog.showModal();
+}
+function clearBackground(){
+ if(backgroundTimer!==null)clearTimeout(backgroundTimer);
+ backgroundTimer=null;background=null;
+ document.body.classList.remove('session-paused');$('privacy-cover').hidden=true;
+}
 function lock(message='Gesperrt. Zum Öffnen Zugangsschlüssel eingeben.'){
  generation++;controller?.abort();controller=null;
  $('access-key').value='';frame?.remove();frame=null;
  if(objectURL){URL.revokeObjectURL(objectURL);objectURL=null;}
+ closeAccessHelp();$('quick-access-hint').hidden=true;
  $('reader').hidden=true;$('gate').hidden=false;$('unlock').disabled=false;status(message);
+ clearBackground();
+}
+function pauseSession(){
+ // An unfinished decrypt never gains a grace period or opens after returning.
+ if(!frame){if(controller)lock('Öffnen unterbrochen. Bitte erneut entsperren.');return;}
+ // Repeated hidden events must not restart the five-minute window.
+ if(background)return;
+ closeAccessHelp();$('access-key').value='';
+ document.body.classList.add('session-paused');$('privacy-cover').hidden=false;
+ const paused={wall:Date.now(),monotonic:performance.now()};background=paused;
+ backgroundTimer=setTimeout(()=>{
+  if(background===paused&&frame)lock('Nach fünf Minuten im Hintergrund gesperrt. Bitte erneut entsperren.');
+ },BACKGROUND_GRACE_MS);
+}
+function resumeSession(){
+ if(!background)return;
+ // Background timers can be suspended. Check both clocks before revealing
+ // content; wall time covers sleep and monotonic time covers clock rollback.
+ const elapsed=Math.max(0,Date.now()-background.wall,performance.now()-background.monotonic);
+ if(elapsed>=BACKGROUND_GRACE_MS){lock('Nach fünf Minuten im Hintergrund gesperrt. Bitte erneut entsperren.');return;}
+ clearBackground();
 }
 async function load(url,signal){const r=await fetch(url,{signal,credentials:'omit',referrerPolicy:'no-referrer',cache:'no-cache'});if(!r.ok)throw Error('Die App-Dateien sind nicht vollständig erreichbar. Online neu öffnen oder Offlinekopie speichern.');return r;}
 async function boundedBytes(response,limit){
@@ -46,13 +81,27 @@ $('unlock-form').addEventListener('submit',async e=>{
   frame.setAttribute('sandbox','allow-scripts allow-popups allow-popups-to-escape-sandbox');frame.referrerPolicy='no-referrer';
   const currentURL=objectURL;frame.addEventListener('load',()=>{URL.revokeObjectURL(currentURL);if(objectURL===currentURL)objectURL=null;},{once:true});
   frame.src=objectURL;$('frame-host').replaceChildren(frame);$('gate').hidden=true;$('reader').hidden=false;status('Streifenhelfer');
+  $('quick-access-hint').hidden=accessHintOffered;accessHintOffered=true;
  }catch(error){if(own===generation)status(error.name==='AbortError'?'Öffnen abgebrochen.':error.message?.startsWith('Die App-Dateien')?error.message:'Öffnen fehlgeschlagen. Zugangsschlüssel und Verbindung prüfen. Bei unvollständiger Offlinekopie diese online erneuern.');}
  finally{password='';if(own===generation){$('unlock').disabled=false;controller=null;}}
 });
 $('lock').addEventListener('click',()=>lock());
 addEventListener('pagehide',()=>lock());
 addEventListener('pageshow',e=>{if(e.persisted)lock();});
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&(frame||controller))lock();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseSession();else resumeSession();});
+$('access-help-gate').addEventListener('click',openAccessHelp);
+$('access-help-open').addEventListener('click',openAccessHelp);
+$('access-help-close').addEventListener('click',closeAccessHelp);
+$('access-help-dialog').addEventListener('click',event=>{if(event.target===$('access-help-dialog'))closeAccessHelp();});
+$('access-help-dialog').addEventListener('close',()=>{
+ if($('access-help-dialog').open)return;
+ const invokingFrame=accessHelpFrame;accessHelpFrame=null;
+ if(invokingFrame&&invokingFrame===frame&&!document.hidden&&!background){
+  invokingFrame.focus({preventScroll:true});
+  invokingFrame.contentWindow.postMessage({type:'SH_ACCESS_HELP_CLOSED'},'*');
+ }
+});
+$('access-help-dismiss').addEventListener('click',()=>{$('quick-access-hint').hidden=true;});
 function offlineText(text){$('offline-status').textContent=text;$('reader-status').textContent=text;frame?.contentWindow?.postMessage({type:'SH_OFFLINE_STATUS',text},'*');}
 async function offline(){
  if(offlineBusy||removing)return;offlineBusy=true;$('offline').disabled=true;const own=++offlineGeneration;
@@ -91,6 +140,6 @@ $('remove').addEventListener('click',async()=>{
   offlineText('Offlinekopie entfernt.');
  }catch(e){offlineText('Entfernen nicht bestätigt: '+e.message);}finally{removing=false;$('remove').disabled=false;$('offline').disabled=offlineBusy;}
 });
-addEventListener('message',e=>{if(!frame||e.source!==frame.contentWindow)return;if(e.data?.type==='SH_LOCK')lock();if(e.data?.type==='SH_OFFLINE')offline();});
+addEventListener('message',e=>{if(!frame||e.source!==frame.contentWindow)return;if(e.data?.type==='SH_LOCK')lock();if(e.data?.type==='SH_OFFLINE')offline();if(e.data?.type==='SH_ACCESS_HELP')openAccessHelp(frame);});
 if('serviceWorker' in navigator){const own=offlineGeneration;navigator.serviceWorker.getRegistration('./').then(async reg=>{if(reg?.active){const s=await workerMessage(reg.active,'STATUS');if(own===offlineGeneration)offlineText(s.ready?'Verschlüsselte Offlinekopie vorhanden.':'Keine vollständige Offlinekopie.');}else if(own===offlineGeneration)offlineText('Noch keine Offlinekopie gespeichert.');}).catch(()=>{if(own===offlineGeneration)offlineText('Offline-Status nicht verfügbar.');});}
 function viewport(){if(window.visualViewport&&Math.abs(visualViewport.scale-1)<.05)document.documentElement.style.setProperty('--sh-shell-height',visualViewport.height+'px');}window.visualViewport?.addEventListener('resize',viewport);viewport();
